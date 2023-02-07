@@ -1,13 +1,17 @@
 # Weather-Dashboard
-Using server APIs  to create a weather dashboard.
+Using server APIs  to create a weather dashboard. 
 
 
 ## Description 
 
-At a minimum, your project README needs a title and a short description explaining the what, why, and how. What was your motivation? Why did you build this project? (Note: The answer is not "Because it was a homework assignment.") What problem does it solve? What did you learn? What makes your project stand out? 
+In this project we had to use multiple server APIs working in parallel, nested inside different functions in order to extract data which we then had to append onto a webpage dynamically using jquery. We also had to research how to extract certain aspects of the API, such as the icons, which were nested inside the API arrays, which we had to traverse. This project also used event listeners and local storage.
+This was a challenging and fun project and the problem that it solved was to allow the user to easily see the current weather and the forecast of the desired city. It was also designed to allow the user to look back at previously seen cities, instead of having to type, which is a form on UX.
+
+
 
 The deployed application can be found here at:
 
+https://resonantdevotion.github.io/Weather-Dashboard/
 
 
 
