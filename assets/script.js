@@ -9,7 +9,7 @@ $("#search-button").on("click", function (event) {
     event.preventDefault();
 
     let city = $('#search-input').val().trim();
-    let geoQueryURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey;
+    let geoQueryURL = "https://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey;
 
     let cityAjax = $.ajax({
         url: geoQueryURL,
@@ -18,7 +18,7 @@ $("#search-button").on("click", function (event) {
         console.log(response);
         let latitude = response[0].lat.toFixed(2);
         let longitude = response[0].lon.toFixed(2);
-        let queryURL = "http://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey + "&units=metric";
+        let queryURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey + "&units=metric";
 
 
         // Pulling the forecast API
@@ -62,7 +62,7 @@ $("#search-button").on("click", function (event) {
 
         //Adding the icon
         let icon = $('<img>');
-        icon.attr("src", `http://openweathermap.org/img/wn/${result.weather[0].icon}@2x.png`);
+        icon.attr("src", `https://openweathermap.org/img/wn/${result.weather[0].icon}@2x.png`);
 
         //adding the icon and city to a header on the html
         let header = $('<div>');
@@ -101,7 +101,7 @@ $("#search-button").on("click", function (event) {
 
         //Adding the icon
         let icon = $('<img>');
-        icon.attr("src", `http://openweathermap.org/img/wn/${forecastArray.weather[0].icon}@2x.png`);
+        icon.attr("src", `https://openweathermap.org/img/wn/${forecastArray.weather[0].icon}@2x.png`);
 
         //adding the icon and date to a header on the html
         let header = $('<div>');
