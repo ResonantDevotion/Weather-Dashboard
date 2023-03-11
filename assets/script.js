@@ -1,64 +1,82 @@
 const searchBtn = $("#search-button");
-const apiKey = "d91f911bcf2c0f925fb6535547a5ddc9"
+const apiKey = "af256969322283fd54785fbf28d0f313";
 
-
+const today = $('#today');
+const forecast = $('#forecast');
+const history = $('#history');
 
 
 // When search button is clicked, functions collects API data for that city
 $("#search-button").on("click", function (event) {
     event.preventDefault();
 
-    let city = $('#search-input').val().trim();
-    let geoQueryURL = "https://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey;
+    today.empty();
+    forecast.empty();
 
-    let cityAjax = $.ajax({
+    // variable to get the trimmed input value entered into the search input area
+    const city = $('#search-input').val().trim();
+    // variable of the API url manipulated to search for the chosen city 
+    const geoQueryURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey;
+
+    //Ajax function to retreive the data from the API URL
+    $.ajax({
         url: geoQueryURL,
         method: "GET"
-    }).then(function (response) {
-        console.log(response);
-        let latitude = response[0].lat.toFixed(2);
-        let longitude = response[0].lon.toFixed(2);
-        let queryURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey + "&units=metric";
+    })
+        // function to retrieve specific data from the API (lat and long) to input into another API for another function
+        .then(function (response) {
+            let latitude = response[0].lat.toFixed(2);
+            let longitude = response[0].lon.toFixed(2);
+            let queryURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey + "&units=metric";
 
+            // Pulling the forecast API
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            })
+                .then(function (result) {
+                    // console.log(result);
+                    // variable that traverses the result object to retrieve the forecast data
+                    const forecasts = result.list;
+                    let forecastArray = []
+                    // for loop that manipulates the result data to obtain only certain data and push it into the forecast array
+                    for (let i = 2; i < forecasts.length; i += 8) {
+                        forecastArray.push(forecasts[i]);
+                    };
+                    console.log(forecasts);
 
-        // Pulling the forecast API
-        $.ajax({
-            url: queryURL,
-            method: "GET"
-        }).then(function (result) {
-            console.log(result);
-            const forecast = result.list;
-            let forecastArray = []
-            for (let i = 2; i < forecast.length; i += 8) {
-                forecastArray.push(forecast[i]);
+                    let currentCity = $('<h3>');
+                    currentCity.text("City: " + city)
+                    forecast.append(currentCity);
 
-            };
-            forecastArray.forEach(futureWeatherData);
+                    // for each item in the array, it runs the futureweatherdata function
+                    forecastArray.forEach(futureWeatherData);
+                });
+
+            // Function to collect CURRENT weather conditons
+            let currentWeatherUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey + "&units=metric";
+            $.ajax({
+                url: currentWeatherUrl,
+                method: "GET"
+            }).then(function (result) {
+                console.log(currentWeatherUrl);
+                displayWeatherData(result);
+            });
+            ////////// NOT WORKING
+            // let currentTimeUnix = moment.unix(currentWeatherUrl.dt).format("Do MM YY");
+            // console.log(currentTimeUnix);
         });
-
-
-        // Function to collect CURRENT weather conditons
-        let currentWeatherUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey + "&units=metric";
-        $.ajax({
-            url: currentWeatherUrl,
-            method: "GET"
-        }).then(function (result) {
-            console.log(result);
-            displayWeatherData(result);
-        });
-        ////////// NOT WORKING
-        // let currentTimeUnix = moment.unix(currentWeatherUrl.dt).format("Do MM YY");
-        // console.log(currentTimeUnix);
-    });
 
 
 
     // Function to display CURRENT city name, date, temp, humidity, wind speed data related to city + related icon
     function displayWeatherData(result) {
+
+        today.clear;
+
         //Getting the current city to diplay on html
         let currentCity = $('<h3>');
-        currentCity.text("City: " + result.name)
-        console.log(result.name);
+        currentCity.text("City: " + city)
 
         //Adding the icon
         let icon = $('<img>');
@@ -69,35 +87,35 @@ $("#search-button").on("click", function (event) {
         header.addClass('d-flex justify-content-between');
         header.append(currentCity);
         header.append(icon);
-        $('#today').append(header);
+        today.append(header);
 
         //Getting the current temp to diplay on html
         let currentTemp = $('<h3>');
         currentTemp.text("Temperature: " + result.main.temp)
-        console.log(result.main.temp);
-        $('#today').append(currentTemp);
+        today.append(currentTemp);
 
         //Getting the current humidity to diplay on html
         let currentHum = $('<h3>');
         currentHum.text("Humidity: " + result.main.humidity + "%")
-        console.log(result.main.humidity);
-        $('#today').append(currentHum);
+        today.append(currentHum);
 
         //Getting the current wind speed to diplay on html
         let currentWind = $('<h3>');
         currentWind.text("Wind speed: " + result.wind.speed + "kph")
-        console.log(result.wind.speed);
-        $('#today').append(currentWind);
+        today.append(currentWind);
     }
 
-    //// Function to run thru forecast array and append forecst to forecast ID.
+    // Function to run thru forecast array and append forecst to forecast ID.
     function futureWeatherData(forecastArray) {
 
-        //date
-        let nextDay = $('<h3>');
-        nextDay.text("date: " + moment.unix(forecastArray.dt).format('Do MMMM YYYY'))
-        $('#forecast').append(nextDay);
-        console.log(forecastArray.dt);
+        let card = $('<div>');
+        card.addClass('card');
+        forecast.append(card);
+        forecast.addClass('card-group d-flex justify-content-between');
+
+        let cardBody = $('<div>');
+        cardBody.addClass('card-body');
+        card.append(cardBody);
 
         //Adding the icon
         let icon = $('<img>');
@@ -106,31 +124,57 @@ $("#search-button").on("click", function (event) {
         //adding the icon and date to a header on the html
         let header = $('<div>');
         header.addClass('d-flex justify-content-between');
-        header.append(nextDay);
         header.append(icon);
-        $('#forecast').append(header);
+        cardBody.append(header);
+
+        //date
+        let nextDay = $('<p>');
+        nextDay.text("Date: " + moment.unix(forecastArray.dt).format('Do MMMM YYYY'))
+        cardBody.append(nextDay);
+        console.log(forecastArray.dt);
 
         //temp
-        let nextDayTemp = $('<h3>');
+        let nextDayTemp = $('<p>');
         nextDayTemp.text("Temperature: " + forecastArray.main.temp)
-        $('#forecast').append(nextDayTemp);
+        cardBody.append(nextDayTemp);
         console.log(forecastArray.main.temp);
 
         //humidity
-        let nextDayHum = $('<h3>');
+        let nextDayHum = $('<p>');
         nextDayHum.text("Humidity: " + forecastArray.main.humidity)
-        $('#forecast').append(nextDayHum);
+        cardBody.append(nextDayHum);
         console.log(forecastArray.main.humidity);
     }
 
     //Save user input city to local storage
     localStorage.setItem("city", city);
 
+    function addPreviousCity() {
+        let previousCity = $('<div>');
+        previousCity.addClass('btn btn-info');
+        previousCity.append(localStorage.getItem("city"));
+        history.append(previousCity)
+    }
 
+    addPreviousCity();
 });
 
-//SEARCH HISTORY
-// create a event listener to getItem(city) from local storage when matching search history city is clicked
-// $('#history').on('click', '#city', function(event){
+// let oldCity = previousCity.textContent
+
+// // SEARCH HISTORY
+// // create a event listener to getItem(city) from local storage when matching search history city is clicked
+// history.on('click', oldCity, function (event) {
+
+//     const oldCityURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + oldCity + "&limit=1&appid=" + apiKey;
+//     $.ajax({
+//         url: oldCityURL,
+//         method: "GET"
+//     })
+//         // function to retrieve specific data from the API (lat and long) to input into another API for another function
+//         .then(function (response) {
+//             let latitude = response[0].lat.toFixed(2);
+//             let longitude = response[0].lon.toFixed(2);
+//             let queryURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey + "&units=metric";
+//         })
 //     localStorage.getItem(event)
 // });
