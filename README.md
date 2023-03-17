@@ -26,8 +26,7 @@ N/A
 ## Usage 
 Deployed application should look like the following images:
 
-This screenshot represents the first page, with london as the first city chosen. I didnt have time to style or add the history:
-<img width="1426" alt="Screenshot 2023-02-07 at 8 18 31 PM" src="https://user-images.githubusercontent.com/119468426/217176532-6c8b23c4-50db-4455-ac75-5024d6cc4539.png">
+<img width="1428" alt="Screenshot 2023-03-18 at 12 23 07 PM" src="https://user-images.githubusercontent.com/119468426/226068907-0a3fadb6-5e1b-4693-9365-559f46793bcb.png">
 
 
 But I did manage to save the user city inputs into local storage:
